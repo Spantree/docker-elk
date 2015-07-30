@@ -102,7 +102,7 @@ RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
 ADD ./start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-EXPOSE 5601 9200 9300 5000
+EXPOSE 5601 9200 9300 5000 3333
 VOLUME /var/lib/elasticsearch
 
 CMD [ "/usr/local/bin/start.sh" ]
