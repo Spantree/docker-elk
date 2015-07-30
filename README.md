@@ -35,13 +35,14 @@ To pull this image from the [Docker registry](https://registry.hub.docker.com/u/
 
 Run the container from the image with the following command:
 
-	$ sudo docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 -it --name elk sebp/elk
+	$ sudo docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 -p 3333:3333 -it --name elk sebp/elk
 
 This command publishes the following ports, which are needed for proper operation of the ELK stack:
 
 - 5601 (Kibana web interface).
 - 9200 (Elasticsearch JSON interface).
 - 5000 (Logstash server, receives logs from Logstash forwarders – see the *[Forwarding logs](#forwarding-logs)* section below).
+- 5000 (Logstash TCP, receives logs from Logstash TCP clients).
 
 **Note** – The image also exposes Elasticsearch's transport interface on port 9300. Use the `-p 5300:5300` option with the `docker` command above to publish it.
 
@@ -80,6 +81,7 @@ If you're using [Docker Compose](https://docs.docker.com/compose/) (formerly kno
 	    - "5601:5601"
 	    - "9200:9200"
 	    - "5000:5000"
+	    - "3333:3333"
 
 You can then start the ELK container like this:
 
@@ -103,7 +105,7 @@ Open a shell prompt in the container and type (replacing `<container-name>` with
 
 - Run the container interactively:
 
-	- With the regular `docker` command use `sudo docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 -it --name elk sebp/elk /bin/bash` – note the extra `/bin/bash` at the end compared to the usual command line
+	- With the regular `docker` command use `sudo docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 -p 3333:3333 -it --name elk sebp/elk /bin/bash` – note the extra `/bin/bash` at the end compared to the usual command line
 	- With Compose use `sudo docker-compose run --service-ports elk /bin/bash`.
 
 - At the container's shell prompt, type `start.sh&` to start Elasticsearch, Logstash and Kibana in the background, and wait for everything to be up and running (wait for `{"@timestamp": ... , "message": "Listening on 0.0.0.0:5601", ... }`)
@@ -269,11 +271,11 @@ You may however want to use a dedicated data volume to store this log data, for 
 
 One way to do this with the `docker` command-line tool is to first create a named container called `elk_data` with a bound Docker volume by using the `-v` option:
 
-	$ sudo docker run -p 5601:5601 -p 9200:9200 -5000:5000 -v /var/lib/elasticsearch --name elk_data sebp/elk
+	$ sudo docker run -p 5601:5601 -p 9200:9200 -5000:5000 -p 3333:3333 -v /var/lib/elasticsearch --name elk_data sebp/elk
 
 You can now reuse the persistent volume from that container using the `--volumes-from` option:
 
-	$ sudo docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 --volumes-from elk_data --name elk sebp/elk
+	$ sudo docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 -p 3333:3333 --volumes-from elk_data --name elk sebp/elk
 
 **Note** – By design, Docker never deletes a volume automatically (e.g. when no longer used by any container). Whilst this avoids accidental data loss, it also means that things can become messy if you're not managing your volumes properly (i.e. using the `-v` option when removing containers with `docker rm` to also delete the volumes... bearing in mind that the actual volume won't be deleted as long as at least one container is still referencing it, even if it's not running). As of this writing, managing Docker volumes can be a bit of a headache, so you might want to have a look at [docker-cleanup-volumes](https://github.com/chadoe/docker-cleanup-volumes), a shell script that deletes unused Docker volumes.
 
