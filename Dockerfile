@@ -1,15 +1,15 @@
 # Dockerfile for ELK stack
-# Elasticsearch 1.7.0, Logstash 1.5.2, Kibana 4.1.1
+# Elasticsearch 1.7.1, Logstash 1.5.3, Kibana 4.1.1
 
 # Build with:
 # docker build -t <repo-user>/elk .
 
 # Run with:
-# docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 -it --name elk <repo-user>/elk
+# docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 -p 3333:3333 -it --name elk <repo-user>/elk
 
 FROM phusion/baseimage
-MAINTAINER Sebastien Pujadas http://pujadas.net
-ENV REFRESHED_AT 2015-07-17
+MAINTAINER Cedric Hurst
+ENV REFRESHED_AT 2015-07-29
 
 ###############################################################################
 #                                INSTALLATION
@@ -33,7 +33,7 @@ RUN apt-get update -qq \
 ### install Logstash
 
 ENV LOGSTASH_HOME /opt/logstash
-ENV LOGSTASH_PACKAGE logstash-1.5.2.tar.gz
+ENV LOGSTASH_PACKAGE logstash-1.5.3.tar.gz
 
 RUN mkdir ${LOGSTASH_HOME} \
  && curl -O https://download.elasticsearch.org/logstash/logstash/${LOGSTASH_PACKAGE} \
@@ -85,6 +85,7 @@ ADD ./logstash-forwarder.key /etc/pki/tls/private/logstash-forwarder.key
 
 # filters
 ADD ./01-lumberjack-input.conf /etc/logstash/conf.d/01-lumberjack-input.conf
+ADD ./02-tcp-input.conf /etc/logstash/conf.d/02-tcp-input.conf
 ADD ./10-syslog.conf /etc/logstash/conf.d/10-syslog.conf
 ADD ./11-nginx.conf /etc/logstash/conf.d/11-nginx.conf
 ADD ./30-lumberjack-output.conf /etc/logstash/conf.d/30-lumberjack-output.conf
