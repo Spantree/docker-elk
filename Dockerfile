@@ -88,7 +88,7 @@ ADD ./01-lumberjack-input.conf /etc/logstash/conf.d/01-lumberjack-input.conf
 ADD ./02-tcp-input.conf /etc/logstash/conf.d/02-tcp-input.conf
 ADD ./10-syslog.conf /etc/logstash/conf.d/10-syslog.conf
 ADD ./11-nginx.conf /etc/logstash/conf.d/11-nginx.conf
-ADD ./30-lumberjack-output.conf /etc/logstash/conf.d/30-lumberjack-output.conf
+ADD ./30-elasticsearch-output.conf /etc/logstash/conf.d/30-elasticsearch-output.conf
 
 # patterns
 ADD ./nginx.pattern ${LOGSTASH_HOME}/patterns/nginx
