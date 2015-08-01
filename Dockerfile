@@ -32,8 +32,8 @@ RUN apt-get update -qq \
 ENV ES_HOME /usr/share/elasticsearch
 WORKDIR ${ES_HOME}
 
-RUN bin/plugin -i elasticsearch/marvel/latest
-RUN bin/plugin -i lmenezes/elasticsearch-kopf \
+RUN bin/plugin -i elasticsearch/marvel/latest \
+ && bin/plugin -i lmenezes/elasticsearch-kopf
 
 ### install Logstash
 
